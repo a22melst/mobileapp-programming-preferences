@@ -1,42 +1,55 @@
 
 # Rapport
 
-**Skriv din rapport här!**
-
-_Du kan ta bort all text som finns sedan tidigare_.
-
-## Följande grundsyn gäller dugga-svar:
-
-- Ett kortfattat svar är att föredra. Svar som är längre än en sida text (skärmdumpar och programkod exkluderat) är onödigt långt.
-- Svaret skall ha minst en snutt programkod.
-- Svaret skall inkludera en kort övergripande förklarande text som redogör för vad respektive snutt programkod gör eller som svarar på annan teorifråga.
-- Svaret skall ha minst en skärmdump. Skärmdumpar skall illustrera exekvering av relevant programkod. Eventuell text i skärmdumpar måste vara läsbar.
-- I de fall detta efterfrågas, dela upp delar av ditt svar i för- och nackdelar. Dina för- respektive nackdelar skall vara i form av punktlistor med kortare stycken (3-4 meningar).
-
-Programkod ska se ut som exemplet nedan. Koden måste vara korrekt indenterad då den blir lättare att läsa vilket gör det lättare att hitta syntaktiska fel.
+Till att börja med gjorde jag en ny aktivitet kallad SecondActivity. Inuti MainActivity lade jag till
+en knapp använde en intent så att SecondActivity öppnas när man trycker på den.
+```
+button = findViewById(R.id.button);
+button.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
+        startActivity(intent);
+   }
+});
+```
+Därefter lade jag till en EditText på SecondActivity där man kan skriva in sin preferens, samt en 
+knapp till att spara preferensen. När sparknappen trycks definieras ett SharedPreference-objekt och 
+ändras sedan med hjälp av en SharedPreference.Editor. Genom editorn kallas metoden putString(), där jag
+skickar med namnet på strängen jag vill ändra samt den nya strängen. Den nya strängen hämtas
+från EditText med hjälp av getText() och getString(). Därefter kallas funktionen apply() för att spara ändringarna.
 
 ```
-function errorCallback(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            // Geolocation API stöds inte, gör något
-            break;
-        case error.POSITION_UNAVAILABLE:
-            // Misslyckat positionsanrop, gör något
-            break;
-        case error.UNKNOWN_ERROR:
-            // Okänt fel, gör något
-            break;
+prefEditText = new EditText(this);
+prefEditText = findViewById(R.id.editText);
+savePref = new Button(this);
+savePref = findViewById(R.id.savebtn);
+savePref.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        preference = getDefaultSharedPreferences(getApplicationContext());
+        prefEditor = preference.edit();
+        prefEditor.putString("PreferenceString", prefEditText.getText().toString());
+        prefEditor.apply();
     }
+});
+```
+
+Inuti MainActivity lägger jag till en TextView som ska visa den string som finns sparad i SharedPreferences.
+För att åstadkomma detta har jag precis som i SecondActivity både ett SharedPreference-objekt och ett 
+SharedPreference.Editor-objekt. För att ändra texten används setText() ihop med getString() kallat via preference-objektet.
+Första argumentet är namnet på strängen som ska hämtas, så här skriver jag PreferenceString igen. Andra
+argumentet är det som står om ingen preferens hittats. Koden är skriven i onResume() istället för onCreate()
+vilket gör att man inte behöver starta om appen för att TextVyn på MainActivity ska uppdateras.
+
+```
+@Override
+protected void onResume() {
+    super.onResume();
+    preference = getDefaultSharedPreferences(this);
+    prefEditor = preference.edit();
+    prefTextView.setText(preference.getString("PreferenceString", "No preference found"));
 }
 ```
-
-Bilder läggs i samma mapp som markdown-filen.
-
-![](android.png)
-
-Läs gärna:
-
-- Boulos, M.N.K., Warren, J., Gong, J. & Yue, P. (2010) Web GIS in practice VIII: HTML5 and the canvas element for interactive online mapping. International journal of health geographics 9, 14. Shin, Y. &
-- Wunsche, B.C. (2013) A smartphone-based golf simulation exercise game for supporting arthritis patients. 2013 28th International Conference of Image and Vision Computing New Zealand (IVCNZ), IEEE, pp. 459–464.
-- Wohlin, C., Runeson, P., Höst, M., Ohlsson, M.C., Regnell, B., Wesslén, A. (2012) Experimentation in Software Engineering, Berlin, Heidelberg: Springer Berlin Heidelberg.
+![](screenshot1.png)
+![](screenshot2.png)

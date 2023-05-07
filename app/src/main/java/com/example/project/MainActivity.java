@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startSecondActivity();
+                Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -45,11 +46,6 @@ public class MainActivity extends AppCompatActivity {
         preference = getDefaultSharedPreferences(this);
         prefEditor = preference.edit();
         prefTextView.setText(preference.getString("PreferenceString", "No preference found"));
-    }
-
-    public void startSecondActivity() {
-        Intent intent = new Intent(this, SecondActivity.class);
-        startActivity(intent);
     }
 
 }
